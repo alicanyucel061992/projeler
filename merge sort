@@ -1,0 +1,108 @@
+#include<stdlib.h>
+#include<stdio.h>
+  
+ 
+void merge(int arr[], int l, int m, int r)
+{
+    int i, j, k;
+    //Sol ve sağ dizi için değişkenker
+    int n1 = m - l + 1;
+    int n2 =  r - m;
+  
+    //Geçici dizilerimiz, boyutları dizimizi ikiye böleceğimiz esasına göre oluşturuyoruz.
+    int L[n1], R[n2];
+  
+   //Aşağıdaki iki döngü geçici dizilerimize elemanları atıyor.
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1+ j];
+  
+    //Yukarıda yaptığımız işlemlerden ötürü değişkenlerimizin sayıları değişti, burada fabrika ayarlarına döndürüyoruz.
+    i = 0; 
+    j = 0;
+    k = l;
+ 
+    //Esas birleştirme mevzusu burada dönüyor. 
+    //sol ve sağ dizide eleman oldukça döngümüz dönecek
+    while (i < n1 && j < n2)
+    {
+        //Eğer sol dizinin i. indisindeki eleman, sağ dizinin j. indisindeki elemandan küçük eşitse 
+        //yeni oluşturulacak dizinin ilk elemanı sol dizinin ilk elemanı oluyor.
+        if (L[i] <= R[j])
+        {
+            arr[k] = L[i];
+            i++;
+        }
+        //Yok değilse sağ dizinin ilk elemanı yeni dizimizin ilk elemanı oluyor.
+        else
+        {
+            arr[k] = R[j];
+            j++;
+        }
+        //dikkat edin, k değişkenini her durumda artırıyoruz.
+        k++;
+    }
+  
+    //Eğer atama işlemlerinden sonra sol dizide boşta eleman kaldıysa boşta kalan yerlere yerleştiriyoruz.
+    while (i < n1)
+    {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+  
+     //Eğer atama işlemlerinden sonra sağ dizide boşta eleman kaldıysa boşta kalan yerlere yerleştiriyoruz.
+    while (j < n2)
+    {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+  
+ 
+void mergeSort(int arr[], int l, int r)
+{
+    //sol sağdan küçükse statement'a gider, bu şartı koymasaydık en küçük parçalara ayrılmasının kontrolünü yapamazdık..
+    if (l < r)
+    {
+        //dizinin ortasını hesaplıyoruz. 
+        int m = l+(r-l)/2;
+  
+         
+        mergeSort(arr, l, m);
+        mergeSort(arr, m+1, r);
+         
+        //Esas  fonksiyona dizimizi, sol indisi, orta indisi ve sağ indisi parametre olarak yolluyoruz
+        merge(arr, l, m, r);
+    }
+}
+  
+//Diziyi ekrana basan fonksiyon
+void printArray(int A[], int size)
+{
+    int i;
+    for (i=0; i < size; i++)
+        printf("%d ", A[i]);
+    printf("\n");
+}
+  
+ 
+int main()
+{
+    //dizimizi oluşturup elemanları atıyoruz.
+    int arr[] = {12, 11, 13, 5, 6, 7};
+    //dizimizin boyutunu hesaplıyoruz.
+    int arr_size = sizeof(arr)/sizeof(arr[0]);
+  
+    //Diziyi ekrana basan fonksiyon
+    printArray(arr, arr_size);
+     
+    //Dizimizi mergeSortisimli fonksiyona gönderiyoruz. Parametre olarak dizimizi, sol minimum indisi ve sağ indisi gönderiyoruz.
+    mergeSort(arr, 0, arr_size - 1);
+  
+    //Sıralanmış diziyi ekrana basıyoruz.
+    printArray(arr, arr_size);
+    return 0;
+}
