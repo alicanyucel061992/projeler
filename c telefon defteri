@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <string.h>
+#include <conio.h>
+struct kayit{
+char isim[16];
+char soyisim[21];
+int tel[11];
+};
+void menuHazirla();
+int telefonEkle();
+int telefonlariListele();
+int aramaYap(char *);
+int guncelle(char *);
+void menuHazirla(){
+printf("--------------------------------------\n");
+printf("* *\n");
+printf("* telefon defteri *\n");
+printf("* programi ! *\n");
+printf("* *\n");
+printf("* *\n");
+printf("* 1. Telefon Ekle *\n");
+printf("* 2. Telefonlari Listele *\n");
+printf("* 3. Arama Yap *\n");
+printf("* 4. guncelle *\n");
+printf("* 5. cikis yap *\n");
+printf("* *\n");
+printf("--------------------------------------\n");
+}
+int telefonEkle(){
+struct kayit yeniKayit;
+FILE *ptVeritabani;
+// dosyaya ac:
+if((ptVeritabani=fopen("rehber.txt","a"))==NULL){
+return -1;
+}
+printf("\n\n");
+printf("isim giriniz(max 15 karakter): ");
+scanf("%s",yeniKayit.isim);
+printf("soyisim giriniz(max 20 karakter): ");
+scanf("%s",yeniKayit.soyisim);
+printf("telefon numarasini giriniz(max 10 karakter): ");
+scanf("%s",yeniKayit.tel);
+fprintf(ptVeritabani, "\n%s\t%s\t%s", yeniKayit.isim, yeniKayit.soyisim, yeniKayit.tel);
+fclose(ptVeritabani);
+return 0;
+}
+int telefonlariListele(){
+// dosyadaki tum telefonlari listele
+// dosyaya ac:
+FILE *ptVeritabani;
+struct kayit aktifKayit;
+if((ptVeritabani=fopen("rehber.txt","r"))==NULL){
+return -1;
+}
+printf("\n\nisim\t\t\tsoyisim\t\t\ttel\n");
+printf("----\t\t\t-----\t\t\t---\n\n");
+// dosya sonuna kadar tum verileri oku:
+while(!feof(ptVeritabani)){
+fscanf(ptVeritabani,"%s%s%s",&aktifKayit.isim, &aktifKayit.soyisim, &aktifKayit.tel);
+printf("%s\t\t\t",aktifKayit.isim);
+printf("%s\t\t\t",aktifKayit.soyisim);
+printf("%s\n",aktifKayit.tel);
+}
+fclose(ptVeritabani);
+return 0;
+}
+int aramaYap(char *arananIsim){
+// dosyadaki tum telefonlarini ara
+// dosyaya ac:
+FILE *ptVeritabani;
+struct kayit aktifKayit;
+int bulunan=0;
+if((ptVeritabani=fopen("rehber.txt","r"))==NULL){
+return -1;
+}
+// dosya sonuna kadar tum verileri oku:
+while(!feof(ptVeritabani)){
+fscanf(ptVeritabani,"%s%s%s",&aktifKayit.isim, &aktifKayit.soyisim,&aktifKayit.tel);
+if(!strcmp(arananIsim, aktifKayit.isim)){ // bbulundu!
+printf("%s\t\t\t",aktifKayit.isim);
+printf("%s\t\t\t",aktifKayit.soyisim);
+printf("%s\n",aktifKayit.tel);
+bulunan++;
+getchar();
+}
+}
+fclose(ptVeritabani);
+return bulunan;
+}
+struct kayit rehber;
+int guncelle(char *guncellenecekisim)
+{
+FILE *dosya,*yeni;
+char aranan[15];
+printf("Guncellenecek Kaydin Adi? :"); 
+scanf("%s",&aranan);
+dosya=fopen("rehber.txt","r");
+yeni=fopen("rehber1.txt","w");
+while(!feof(dosya)){
+fscanf(dosya,"%s %s %s",rehber.isim,rehber.soyisim,rehber.tel);
+if(strstr(rehber.isim,aranan)){//strcmp(rehber.ad,aranan)==0
+printf(" Yeni Bilgiler:\n\n");//yeni bilgileri al.
+printf("Ad: "); scanf("%s",&rehber.isim);
+printf("Soyad : "); scanf("%s",&rehber.soyisim);
+printf("Tel No : "); scanf("%s",&rehber.tel);
+}
+fprintf(yeni,"\n%s\t%s\t%s",rehber.isim,rehber.soyisim,rehber.tel);
+}
+fclose(dosya);
+fclose(yeni);
+remove("rehber.txt");
+rename("rehber1.txt","rehber.txt");
+return 0;
+}
+int main(){
+char secim='0';
+char aranacakIsim[16];
+int numaraAra=-1;
+int guncelley=-1;
+char guncellenecekisim[20];
+// menu hazirla:
+menuHazirla();
+do{
+printf("\n\nseciminiz: ");
+secim = putch(getch());
+switch (secim){
+case '1':
+if (telefonEkle()==0){ // geri bildirim:
+printf("\ntelefon numarasi basariyla eklendi.");
+}else{
+printf("\nHATA: telefon numarasi eklenemedi!");
+}
+break;
+case '2':
+if (telefonlariListele()==0){ // geri bildirim:
+printf("\ntelefonlar basariyla listelendi.");
+}else{
+printf("\nHATA: telefon numaralari listelenemedi!");
+}
+break;
+case '3':
+printf("\naranacak ismi giriniz(max 15 karakter):");
+scanf("%s",aranacakIsim);
+numaraAra = aramaYap(aranacakIsim);
+if (numaraAra == 0){ // geri bildirim:
+printf("\naranan isim kayitlarda bulunamadi.");
+}else {
+if(numaraAra > 0)
+printf("\ntoplam %d kayit bulundu.",numaraAra);
+else
+printf("\nHATA: numara aranamadi!");
+}
+break;
+case '4':
+printf("guncellenecek kaydin adini giriniz:");
+scanf("%s",guncellenecekisim);
+guncelley=guncelle(guncellenecekisim);
+if(guncelle>0)
+{
+printf("guncelleme islemi basarili:\n"); 
+}
+else{
+printf("hata guncellenemedi\n");
+}
+break;
+case '5':
+return 0;
+break;
+default:
+printf("\nlutfen 1-5 arasinda bir secim yapiniz.");
+}
+}while(secim!=5);
+return 0;
+}
