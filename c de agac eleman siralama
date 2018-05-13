@@ -1,0 +1,76 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<conio.h>
+typedef struct _agac{
+ int sayi;
+ struct _agac *sag;
+ struct _agac *sol;
+}agac;
+agac *ilk,*gecici;
+void ekle(int num)
+{ if(num<gecici->sayi){
+  if(gecici->sol==NULL){
+   gecici->sol=new agac;
+   gecici=gecici->sol;
+   gecici->sayi=num;
+   gecici->sag=NULL;  gecici->sol=NULL;
+  }
+  else{
+   gecici=gecici->sol;
+   ekle(num);
+  }
+ }
+ if(num>gecici->sayi){
+  if(gecici->sag==NULL){
+   gecici->sag=new agac;
+   gecici=gecici->sag;
+   gecici->sayi=num;
+   gecici->sag=NULL;  gecici->sol=NULL;
+  }
+  else{
+   gecici=gecici->sag;
+   ekle(num);
+  }
+ }
+}
+void sirala(agac *gezici){
+ if(gezici->sol!=NULL){
+  sirala(gezici->sol);
+ }
+ printf("%d-",gezici->sayi);
+ if(gezici->sag!=NULL){
+  sirala(gezici->sag);
+ }
+ 
+}
+int main(){
+int numara,secim;
+ilk=gecici=new agac;
+printf("Kok degerini giriniz : ");
+scanf("%d",&gecici->sayi);
+gecici->sag=NULL;
+gecici->sol=NULL;
+while(secim!=-1){
+system("CLS");
+printf("\nYapmak Istediginiz Islemi Secin\n 1-)Agaca Sayi Ekleme\n 2-)Agaci Siralama\n 3-)Cikis\n");
+scanf("%d",&secim);
+switch(secim){
+ case 1:
+  printf("Numara gir : ");
+  scanf("%d",&numara);
+  gecici=ilk;
+  ekle(numara);
+  break;
+ case 2:
+  printf("Agac Siralaniyor...\n");
+  gecici=ilk;
+  sirala(gecici);
+  getch();
+  break;
+ case 3 :
+  printf("Cikis Yapildi");
+  getch();
+  secim=-1;
+  break;
+} 
+}}
