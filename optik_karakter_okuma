@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+namespace WindowsFormsApp10
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        public string ResimYolu { get; private set; }
+
+         void Form1_Load(object sender, EventArgs e)
+        {
+            MODI.Document documan = new MODI.Document();
+            string Resimyolu = "";
+
+        }
+        void Resimyukle()
+        {
+
+            openFileDialog1.FileName = "";
+            openFileDialog1.Filter = "Resim Dosyaları|*.jpg; *.png; *.bmp; *.jpeg; *.PNG;";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                ResimYolu = openFileDialog1.FileName.ToString();
+                pictureBox1.Image = Image.FromFile(ResimYolu);
+                pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            }
+        }
+
+     void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                MODI.Document documan = new MODI.Document();
+                documan.Create(ResimYolu);
+                documan.OCR(MODI.MiLANGUAGES.miLANG_ENGLISH, true, true);
+                foreach (MODI.Image resim in documan.Images)
+                {
+                    MODI.Layout plan = resim.Layout;
+                    richTextBox1.Text = plan.Text;
+                }
+                documan.Close();
+            }
+            catch (Exception hata)
+            {
+                MessageBox.Show(hata.Message.ToString(), "Hata oluştu..!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+
+         void button1_Click(object sender, EventArgs e)
+        {
+            Resimyukle();
+        }
+    }
+}
