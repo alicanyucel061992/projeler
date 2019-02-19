@@ -1,0 +1,167 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data;
+using System.Drawing;
+using System.Security;
+using System.Data.SqlClient;
+namespace barkod_sistemi
+{
+    public partial class Form1 : Form
+    {
+        SqlConnection con = new SqlConnection("data source=ALICAN\\SQL;initial catalog=alican;integrated Security=SSPI");
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_BackgroundImageLayoutChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Zen.Barcode.Code128BarcodeDraw brc = Zen.Barcode.BarcodeDrawFactory.Code128WithChecksum;
+            pictureBox1.Image = brc.Draw(textBox1.Text, 400);
+            label1.Text = textBox1.Text;
+            con.Open();
+            SqlCommand ekle = new SqlCommand("insert into alicanurun(barkod,urunadi,fiyat)values('" + textBox1.Text + "','" + textBox2.Text + "','" + textBox3.Text + "')", con);
+            
+            ekle.ExecuteNonQuery();
+            con.Close();
+           
+               
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+       
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+             void kayitGetir()
+            {
+                con.Open();
+                string kayit = "SELECT * from alicanurun";
+                
+                SqlCommand komut = new SqlCommand(kayit, con);
+                
+                SqlDataAdapter da = new SqlDataAdapter(komut);
+               
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+              
+                dataGridView1.DataSource = dt;
+               
+                con.Close();
+            }
+            kayitGetir();
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            con.Open();
+            SqlCommand sil = new SqlCommand("delete from alicanurun where id=1",con);
+            sil.ExecuteNonQuery();
+
+
+            con.Close();
+
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            con.Open();
+
+            int srg = int.Parse(textBox4.Text);
+
+            string sorgu = "Select * from alicanurun where id Like '" + srg + "'";
+
+            SqlDataAdapter adap = new SqlDataAdapter(sorgu, con);
+
+            DataSet ds = new DataSet();
+
+            adap.Fill(ds, "alicanurun");
+
+            this.dataGridView2.DataSource = ds.Tables[0];
+
+            con.Close();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            void urunsil()
+            {
+                con.Open();
+                string secmeSorgusu = "SELECT * from alicanurun where id=@id";
+              
+                SqlCommand secmeKomutu = new SqlCommand(secmeSorgusu, con);
+                secmeKomutu.Parameters.AddWithValue("@id", textBox6.Text);
+               
+                SqlDataAdapter dx = new SqlDataAdapter(secmeKomutu);
+                SqlDataReader dy = secmeKomutu.ExecuteReader();
+                
+                if (dy.Read()) 
+                {
+                    string id = dy["id"].ToString();
+                    dy.Close();
+                    
+                    DialogResult durum = MessageBox.Show(id + " kaydını silmek istediğinizden emin misiniz?", "Silme Onayı", MessageBoxButtons.YesNo);
+                    
+                    if (DialogResult.Yes == durum) 
+                    {
+
+                        string silmeSorgusu = "DELETE from alicanurun where id=@id";
+
+                        SqlCommand silKomutu = new SqlCommand(silmeSorgusu, con);
+                        silKomutu.Parameters.AddWithValue("@id", textBox6.Text);
+                        silKomutu.ExecuteNonQuery();
+                        MessageBox.Show("Kayıt Silindi...");
+                        
+                    }
+                }
+                else
+                    MessageBox.Show("ürün Bulunamadı.");
+                con.Close();
+            }
+            urunsil();
+            
+        }
+    }
+}
+
